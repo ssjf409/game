@@ -54,29 +54,36 @@ def random_direct():
 
 
 def add_player(players):
+    print()
     new_player = input("플레이어의 이름을 알려주세요.")
     if new_player in players:
         print("이미 등록된 이름입니다. ")
         return
     else:
         players[new_player] = [0, 0]
+        save_players()
         print(new_player + "님이 추가되었습니다.")
+        print()
 
 def show_players(players):
-    # print(players)
+    print()
+    print("=====플레이어=====")
     for player in players.keys():
         # print(players[player][0])
         print(player + " : " + str(players[player][0]) + "승, " + str(players[player][1]) + "패")
     print()
 
 def show_game_boards(my_board, enemy_board, my_life, enemy_life):
+    print()
+    print("=================")
     print("Enemy board")
     print_board(enemy_board, False)
     print("----------")
-    # print_board(enemy_board, False)
+    # print_board(enemy_board, Faalse)
     print("My board")
     print_board(my_board, True)
-    print("My life : " + str(my_life) +", Enemy life : " + str(enemy_life))
+    print()
+    print("  My  life : " + str(my_life) +"\nEnemy life : " + str(enemy_life))
     print()
 
 def give_hint(y, x):
@@ -112,6 +119,7 @@ def player_turn(player):
     else:
         enemy_board[y][x] = 'X'
         if(give_hint(y, x)):
+            print()
             print("HINT : 같은 열 혹은 행에 적이 있습니다.")
     return False
 
@@ -209,7 +217,6 @@ def play_game():
     player = ""
     while True:
         print()
-        print("====플레이어 목록====")
         show_players(players)
         print("플레이어를 선택해주세요.")
         player = input()
@@ -233,9 +240,11 @@ def play_game():
     ship_isRow = True
 
     while True:
+        print()
         ship_size = input("플레이어의 배 크기를 설정해주세요. (1 ~ 3)")
 
         if ship_size < "1" or ship_size > "3":
+            print()
             print("잘못 입력하셨습니다.")
             continue
         else:
@@ -243,6 +252,7 @@ def play_game():
             break
 
     while True:
+        print()
         temp = input("배를 가로로 하고 싶으면 (Y/y)를, 세로로 하고 싶으면 (N/n)를 눌러주세요.")
         if temp == 'Y' or temp == 'y':
             ship_isRow = False
@@ -251,24 +261,27 @@ def play_game():
             ship_isRow = True
             break
         else:
+            print()
             print("잘못 입력하셨습니다. 다시 입력해주세요.")
 
     while True:
         try:
             # print([int(x) for x in input("배의 위치를 x, y 형태로 입력해주세요. ").split(',')])
+            print()
             ship_col, ship_row = [int(x) for x in input("배의 위치를 x, y 형태로 입력해주세요. ").split(',')]
-            print(ship_col, ship_row)
-
 
             if not ship_isRow and ship_col + ship_size - 1 not in range(len(my_board)):
+                print()
                 print("보드의 크기 안으로 입력해주세요.")
                 continue
             elif ship_isRow and ship_row + ship_size - 1 not in range(len(my_board[0])):
+                print()
                 print("보드의 크기 안으로 입력해주세요.")
                 continue
 
             break
         except:
+            print()
             print("x, y 형태로 입력해주세요")
             continue
 
@@ -291,7 +304,7 @@ def play_game():
 
 
     # 게임 시작
-
+    print()
     show_game_boards(my_board, enemy_board, my_life, enemy_life)
 
 
@@ -311,17 +324,36 @@ def play_game():
         if is_game_over(player, my_life, enemy_life):
             break
 
+def save_players():
+    with open("score.txt", "w") as file:
+        for name in players.keys():
+            file.write(name + ", " + str(players[name][0]) + ", " + str(players[name][1]) + "\n")
 
-
-
+print()
+print()
 print("################################")
 print("   Welcome To Battleship game   ")
 print("################################")
+print()
+
+print("플레이어 정보를 로딩 중입니다...")
+print()
+
+with open('score.txt', 'r') as file:
+    scores = file.readlines()
+    for score in scores:
+        score_list = score.split(',')
+        players[score_list[0]] = [int(score_list[1]), int(score_list[2])]
+
+
 
 while True:
     if len(players) == 0:
-        new_player = input("플레이어의 이름을 알려주세요.")
+        print("등록된 플레이어 정보가 없습니다.")
+        new_player = input("새로운 플레이어의 이름을 알려주세요.")
         players = {new_player : [0, 0]}
+        save_players()
+        print()
     else:
         print("      Menu      ")
         print("1. 플레이어 추가")
@@ -331,6 +363,7 @@ while True:
 
         cmd = 0
         while True:
+            print()
             cmd = input("메뉴를 선택해주세요.")
             if cmd < '1' or cmd > '4':
                 print("잘못입력하셨습니다.")
